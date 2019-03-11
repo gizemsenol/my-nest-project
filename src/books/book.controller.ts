@@ -1,33 +1,35 @@
-import { Controller, Post, Body, Get, Put, Delete,Param} from '@nestjs/common';
-import { BooksService } from './book.service';
+import { Controller, Post, Body, Get, Put, Delete, Param} from '@nestjs/common';
+import { BookService } from './book.service';
 import { Book } from './book.entity';
-import { Repository } from 'typeorm';
+import {AuthGuard} from '@nestjs/passport'
+import {UseGuards} from '@nestjs/common'
 
-@Controller('books')
-export class BooksController {
-    constructor(private readonly service: BooksService) {}
-    @Get(':id')
+@Controller('/api')
+export class BookController {
+    constructor(private readonly service: BookService) {}
+    @Get('/book/:id')
+    @UseGuards(AuthGuard('bearer'))
     get(@Param() params) {
         return this.service.getBook(params.id);
     }
-    
-    @Get()
-    list(@Param() params) {
-        return this.service.getBooks();
-    }
 
-    @Post()
+    @Post('/book/')
+    @UseGuards(AuthGuard('bearer'))
     create(@Body() book) {
         return this.service.createBook(book);
     }
+    
+    @Delete('/book/:id')
+    @UseGuards(AuthGuard('bearer'))
+    deleteBook(@Param() params) {
+        return this.service.deleteBook(params.id);
+    }    
 
-    @Put()
+    @Put('/book')
+    @UseGuards(AuthGuard('bearer'))
     update(@Body() book: Book) {
         return this.service.updateBook(book);
     }
 
-    @Delete(':id')
-    deleteBook(@Param() params) {
-        return this.service.deleteBook(params.id);
-    }
+
 }

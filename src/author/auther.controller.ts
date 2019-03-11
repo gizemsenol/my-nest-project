@@ -1,33 +1,39 @@
-import { Controller, Post, Body, Get, Put, Delete,Param} from '@nestjs/common';
-import { AuthorsService } from './author.service';
+import { Controller, Post, Body, Get, Put, Delete,Param, UseGuards} from '@nestjs/common';
+import { AuthorService } from './author.service';
 import { Author } from './author.entity';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('authors')
+@Controller('/api')
 
-export class AuthorsController {
-    
-    constructor(private readonly service: AuthorsService) { }
+export class AuthorController {
+    constructor(private readonly service: AuthorService) { }
 
-    @Get(':id')
+    @Get('/author/:id')
+    @UseGuards(AuthGuard('bearer'))
     get(@Param() params) {
         console.log(params.id)
         return this.service.getAuthors(params.id);
     }
 
-    @Post()
+    @Post('/author')
+    @UseGuards(AuthGuard('bearer'))
     save(@Body() author) {
         
         return this.service.saveAuthor(author);
     }
 
-    @Put(':id')
+    @Put('/author/:id')
+    @UseGuards(AuthGuard('bearer'))
     update(@Body() author: Author) {
         console.log(author)
         return this.service.updateAuthor(author);
     }
 
-    @Delete(':id')
+    @Delete('/author/:id')
+    @UseGuards(AuthGuard('bearer'))
     deleteAuthor(@Param() params) {
         return this.service.deleteAuthor(params.id);
     }
+
+    
 }
